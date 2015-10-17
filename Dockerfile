@@ -27,6 +27,11 @@ RUN /usr/share/debconf/fix_db.pl
 RUN apt-get install -f
 
 
+# The follwoing apt-get install commands will build
+# a desktop environment from a simple base up to 
+# some goodies, that are not essential, but useful.
+# disable from last to first to make image smaller.
+
 # lxde-core only
 RUN apt-get install -y --no-install-recommends lxde-core
 
@@ -39,13 +44,15 @@ RUN apt-get install -y leafpad
 # lxde needs dbus-launch for whatever reason
 RUN apt-get install -y dbus-x11
 
-# some utils to have proper menus etc.
+# some utils to have proper menus, mime file types etc.
 RUN apt-get install -y --no-install-recommends xdg-utils
 RUN apt-get install -y menu
 RUN apt-get install -y menu-xdg
+RUN apt-get install -y mime-support
+RUN apt-get install -y desktop-file-utils
 
 # icons: not needed to run lxde, but looks nicer, especially in the panel
-RUN apt-get install -y lxde-icon-theme
+RUN apt-get install -y hicolor-icon-theme
 
 # look&feel settings for lxde
 RUN apt-get install -y lxappearance
@@ -53,18 +60,26 @@ RUN apt-get install -y lxappearance
 # xprop needed by lxde (works without it, though)
 RUN apt-get install -y x11-utils
 
-# OpenGl support in the dependencies
-RUN apt-get install -y mesa-utils mesa-utils-extra
-
-# get xrandr and some other goodies
-RUN apt-get install -y x11-xserver-utils
-
 # get some goodies more than above
 RUN apt-get install -y --no-install-recommends lxde
 
-# enable to get full LXDE desktop environment:
-#RUN apt-get install -y lxde
+# OpenGl support in the dependencies
+RUN apt-get install -y mesa-utils mesa-utils-extra
 
+
+## Further:
+## disabled, but maybe usefull additional installations
+
+# enable to get xrandr and some other goodies
+#RUN apt-get install -y x11-xserver-utils
+
+# enable to get browser Chromium
+#RUN apt-get install -y chromium
+
+# enable to get full LXDE desktop environment:
+# (not much missing now, though)
+# (would install xorg, too, but is not needed)
+#RUN apt-get install -y lxde
 
 # clean cache to make image a bit smaller
 RUN apt-get clean
