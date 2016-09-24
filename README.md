@@ -13,4 +13,4 @@ https://github.com/mviereck/x11docker
  - x11docker --xpra x11docker/lxde pcmanfm
  
  To create a persistent home folder preserving your settings:
- - x11docker --xephyr --desktop --hostuser --home x11docker/lxde
+ - x11docker --xephyr --desktop --hostuser --home x11docker/lxde start
