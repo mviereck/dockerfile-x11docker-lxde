@@ -57,7 +57,7 @@ RUN apt-get install -y lxde-icon-theme
 RUN apt-get install -y --no-install-recommends lxappearance leafpad
 
 # lxsession-logout is missing. bug in Ubuntu-LXDE? Fake!
-RUN echo "killall -s SIGINT lxsession" > /usr/bin/lxsession-logout
+RUN echo "killall -s SIGINT lxpanel" > /usr/bin/lxsession-logout
 RUN chmod +x /usr/bin/lxsession-logout
 
 
@@ -99,6 +99,12 @@ show_trash=1\n\
 show_mounts=1\n\
 ' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf
 
+# GTK settings for icons and style
+RUN echo '\n\
+gtk-theme-name="Raleigh"\n\
+gtk-icon-theme-name="nuoveXT2"\n\
+' > /etc/skel/.gtkrc-2.0
+
 RUN cp -R /etc/skel/. /root/
 
 # create startscript 
@@ -115,7 +121,10 @@ case $DISPLAY in\n\
     x11docker --desktop x11docker/lxde"\n\
   exit 1 ;;\n\
 esac\n\
-lxsession\n\
+#lxsession\n\
+openbox --sm-disable &\n\
+pcmanfm --desktop --profile LXDE &\n\
+lxpanel --profile LXDE \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
