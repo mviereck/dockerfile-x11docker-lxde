@@ -39,7 +39,10 @@ RUN apt-get install -y --no-install-recommends lxde-common
 RUN apt-get install -y lxde-icon-theme
 
 # some useful lxde apps
-RUN apt-get install -y --no-install-recommends lxappearance leafpad lxterminal
+RUN apt-get install -y --no-install-recommends lxappearance leafpad 
+
+# Terminal
+RUN apt-get install -y --no-install-recommends xterm
 
 
 ## Further:
