@@ -7,12 +7,10 @@
 #
 # Example: x11docker --desktop x11docker/lxde 
 #
-# ToDo: Find solution for error message window on startup -> problem with LXDE policy kit not working in docker
  
-#FROM phusion/baseimage:latest
 FROM ubuntu:xenial
 
-RUN apt-get update
+RUN apt-get   update
 
 # Set environment variables 
 ENV DEBIAN_FRONTEND noninteractive 
@@ -27,12 +25,6 @@ RUN apt-get install -y apt-utils
 RUN /usr/share/debconf/fix_db.pl
 RUN apt-get install -y -f
 
-# dbus-launch needed by LXDE
-RUN apt-get install -y dbus-x11
-
-# Folder must be created by root
-RUN mkdir /tmp/.ICE-unix && chmod 1777 /tmp/.ICE-unix
-
 # some utils to have proper menus, mime file types etc.
 RUN apt-get install -y --no-install-recommends xdg-utils
 RUN apt-get install -y menu
@@ -40,38 +32,29 @@ RUN apt-get install -y menu-xdg
 RUN apt-get install -y mime-support
 RUN apt-get install -y desktop-file-utils
 
-# xterm as an everywhere working terminal
-RUN apt-get install -y --no-install-recommends xterm
-
-# pstree, killall etc.
-RUN apt-get install -y psmisc
-
 
 # install core LXDE
 RUN apt-get install -y --no-install-recommends lxde-core
-RUN apt-get install -y --no-install-recommends lxsession
 RUN apt-get install -y --no-install-recommends lxde-common
 RUN apt-get install -y lxde-icon-theme
 
-# some useful apps und icons. 
-RUN apt-get install -y --no-install-recommends lxappearance leafpad
-
-# lxsession-logout is missing. bug in Ubuntu-LXDE? Fake!
-RUN echo "killall -s SIGINT lxpanel" > /usr/bin/lxsession-logout
-RUN chmod +x /usr/bin/lxsession-logout
-
+# some useful lxde apps
+RUN apt-get install -y --no-install-recommends lxappearance leafpad lxterminal
 
 
 ## Further:
-## Usefull additional installations, enable them if you like to
+## Usefull additional installations, enable or disable as you like to
+
+# pstree etc.
+RUN apt-get install -y psmisc
 
 #sudo
 RUN apt-get install -y sudo
 
-## some X libs, f.e. allowing videos in Xephyr, avoiding xprop vala error message
+## some X libs, f.e. allowing videos in Xephyr
 #RUN apt-get install -y --no-install-recommends x11-utils
 
-## OpenGl support in dependencies
+## OpenGL support in dependencies
 #RUN apt-get install -y mesa-utils mesa-utils-extra
 
 ## Pulseaudio support
@@ -79,6 +62,9 @@ RUN apt-get install -y sudo
 
 ## Xrandr and some other goodies
 #RUN apt-get install -y x11-xserver-utils
+
+## lightweight dillo browser
+#RUN apt-get install -y dillo
 
 
 
@@ -88,8 +74,16 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 
+# config for lxpanel, including replacement for lxsession-logout
+RUN mkdir -p /etc/skel/.config/lxpanel/default
+RUN echo '[Command]\n\
+Logout=pkill lxpanel\n\
+FileManager=pcmanfm %s \n\
+Terminal=xterm -e \n\
+' > /etc/skel/.config/lxpanel/default/config
+
 # pcmanfm config to get nice wallpaper
-RUN mkdir -p /etc/skel/.config/pcmanfm/LXDE
+RUN mkdir -p /etc/skel/.config/pcmanfm/default
 RUN echo '[*]\n\
 wallpaper_mode=stretch\n\
 wallpaper_common=1\n\
@@ -97,13 +91,19 @@ wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
 show_documents=1\n\
 show_trash=1\n\
 show_mounts=1\n\
-' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf
+' > /etc/skel/.config/pcmanfm/default/desktop-items-0.conf
 
-# GTK settings for icons and style
+# GTK 2+3 settings for icons and style
+RUN mkdir -p /etc/skel/.config/gtk-3.0
 RUN echo '\n\
 gtk-theme-name="Raleigh"\n\
 gtk-icon-theme-name="nuoveXT2"\n\
 ' > /etc/skel/.gtkrc-2.0
+RUN echo '\n\
+[Settings]\n\
+gtk-theme-name="Raleigh"\n\
+gtk-icon-theme-name="nuoveXT2"\n\
+' > /etc/skel/.config/gtk-3.0/settings.ini
 
 RUN cp -R /etc/skel/. /root/
 
@@ -113,18 +113,13 @@ if [ ! -e "$HOME/.config" ] ; then\n\
   cp -R /etc/skel/. $HOME/ \n\
   cp -R /etc/skel/* $HOME/ \n\
 fi\n\
-case $DISPLAY in\n\
-  "")  echo "Need X server to start LXDE.\n\
-  To run GUI applications in docker, you can use x11docker.\n\
-  Get x11docker from github: https://github.com/mviereck/x11docker\n\
-  Run image with command:\n\
-    x11docker --desktop x11docker/lxde"\n\
-  exit 1 ;;\n\
-esac\n\
-#lxsession\n\
-openbox --sm-disable &\n\
-pcmanfm --desktop --profile LXDE &\n\
-lxpanel --profile LXDE \n\
+if [ "$*" = "" ] ; then \n\
+  openbox --sm-disable &\n\
+  pcmanfm --desktop &\n\
+  lxpanel \n\
+else \n\
+  eval $* \n\
+fi \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
