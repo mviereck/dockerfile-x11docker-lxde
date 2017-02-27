@@ -16,3 +16,4 @@ Dockerfile containing LXDE desktop
  
  # Screenshot
 ![screenshot](https://raw.githubusercontent.com/mviereck/x11docker/screenshots/screenshot-lxde.png "lxde desktop running in Xephyr window using x11docker")
+ 
