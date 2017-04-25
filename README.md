@@ -6,10 +6,8 @@ Dockerfile containing LXDE desktop
  - Get [x11docker and x11docker-gui from github](https://github.com/mviereck/x11docker)
 
 # Example commands: 
- - `x11docker --desktop  x11docker/lxde`
  - `x11docker x11docker/lxde pcmanfm`
- - `x11docker --xephyr --desktop x11docker/lxde`
- - `x11docker --xpra x11docker/lxde pcmanfm`
+ - `x11docker --xephyr x11docker/lxde`
  
  To create a container user similar to your host user and  persistent home folder preserving your settings:
  - `x11docker --xephyr --desktop --hostuser --home x11docker/lxde start`
