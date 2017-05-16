@@ -13,6 +13,7 @@ FROM debian:stretch
 RUN apt-get  update
 RUN apt-get install -y apt-utils
 RUN apt-get install -y dbus-x11 x11-utils x11-xserver-utils
+RUN apt-get install -y procps psmisc
 
 RUN apt-get install -y --no-install-recommends lxde
 
