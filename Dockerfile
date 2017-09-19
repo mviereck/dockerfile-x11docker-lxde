@@ -5,7 +5,7 @@
 # Get x11docker from github: 
 #   https://github.com/mviereck/x11docker 
 #
-# Examples: x11docker --wm=none x11docker/lxde
+# Examples: x11docker --desktop x11docker/lxde
 #           x11docker x11docker/lxde pcmanfm
 
 FROM debian:stretch
@@ -51,12 +51,14 @@ show_trash=1\n\
 show_mounts=1\n\
 ' > /etc/skel/.config/pcmanfm/default/desktop-items-0.conf
 
-# GTK 2+3 settings for icons and style
-RUN mkdir -p /etc/skel/.config/gtk-3.0
+# GTK 2 settings for icons and style
 RUN echo '\n\
 gtk-theme-name="Raleigh"\n\
 gtk-icon-theme-name="nuoveXT2"\n\
 ' > /etc/skel/.gtkrc-2.0
+
+# GTK 3 settings for icons and style
+RUN mkdir -p /etc/skel/.config/gtk-3.0
 RUN echo '\n\
 [Settings]\n\
 gtk-theme-name="Raleigh"\n\
@@ -66,17 +68,10 @@ gtk-icon-theme-name="nuoveXT2"\n\
 
 # create startscript 
 RUN echo '#! /bin/bash\n\
-if [ ! -e "$HOME/.config" ] ; then\n\
-  cp -R /etc/skel/. $HOME/ \n\
-  cp -R /etc/skel/* $HOME/ \n\
-fi\n\
-if [ "$*" = "" ] ; then \n\
-  openbox --sm-disable &\n\
-  pcmanfm --desktop &\n\
-  lxpanel \n\
-else \n\
-  eval $* \n\
-fi \n\
+[ -e "$HOME/.config" ] || cp -R /etc/skel/. $HOME/ \n\
+openbox --sm-disable &\n\
+pcmanfm --desktop &\n\
+lxpanel \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
