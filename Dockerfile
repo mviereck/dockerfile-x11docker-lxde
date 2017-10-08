@@ -30,26 +30,8 @@ RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs
 RUN apt-get install -y menu menu-xdg mime-support desktop-file-utils desktop-base
 
 # LXDE
+RUN apt-get install -y --no-install-recommends policykit-1-gnome
 RUN apt-get install -y --no-install-recommends lxde
-
-# config for lxpanel, including replacement for lxsession-logout
-RUN mkdir -p /etc/skel/.config/lxpanel/default
-RUN echo '[Command]\n\
-Logout=pkill lxpanel\n\
-FileManager=pcmanfm %s \n\
-Terminal=xterm -e \n\
-' > /etc/skel/.config/lxpanel/default/config
-
-# pcmanfm config to get nice wallpaper
-RUN mkdir -p /etc/skel/.config/pcmanfm/default
-RUN echo '[*]\n\
-wallpaper_mode=stretch\n\
-wallpaper_common=1\n\
-wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
-show_documents=1\n\
-show_trash=1\n\
-show_mounts=1\n\
-' > /etc/skel/.config/pcmanfm/default/desktop-items-0.conf
 
 # GTK 2 settings for icons and style
 RUN echo '\n\
@@ -65,13 +47,10 @@ gtk-theme-name="Raleigh"\n\
 gtk-icon-theme-name="nuoveXT2"\n\
 ' > /etc/skel/.config/gtk-3.0/settings.ini
 
-
 # create startscript 
 RUN echo '#! /bin/bash\n\
 [ -e "$HOME/.config" ] || cp -R /etc/skel/. $HOME/ \n\
-openbox --sm-disable &\n\
-pcmanfm --desktop &\n\
-lxpanel \n\
+lxsession \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
