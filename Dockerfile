@@ -9,15 +9,16 @@
 #           x11docker x11docker/lxde pcmanfm
 
 FROM debian:stretch
-
-RUN apt-get   update
+ENV DEBIAN_FRONTEND noninteractive
+ 
+RUN apt-get update
 RUN apt-get install -y apt-utils
-RUN apt-get install -y dbus-x11 x11-utils x11-xserver-utils
-RUN apt-get install -y procps psmisc
+RUN apt-get install -y dbus-x11 x11-utils x11-xserver-utils procps psmisc
 
-# OpenGL support
-RUN apt-get install -y libxv1 mesa-utils mesa-utils-extra libgl1-mesa-glx libglew2.0 \
-                       libglu1-mesa libgl1-mesa-dri libdrm2 libgles2-mesa libegl1-mesa
+# OpenGL / MESA
+RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
+#RUN apt-get install -y libxv1 mesa-utils mesa-utils-extra libgl1-mesa-glx libglew2.0 \
+#                       libglu1-mesa libgl1-mesa-dri libdrm2 libgles2-mesa libegl1-mesa
 
 # Language/locale settings
 ENV LANG=en_US.UTF-8
@@ -26,12 +27,14 @@ RUN echo "LANG=en_US.UTF-8" > /etc/default/locale
 RUN apt-get install -y locales
 
 # some utils to have proper menus, mime file types etc.
-RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs
-RUN apt-get install -y menu menu-xdg mime-support desktop-file-utils desktop-base
+RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs \
+    menu menu-xdg mime-support desktop-file-utils desktop-base
 
 # LXDE
 RUN apt-get install -y --no-install-recommends policykit-1-gnome
 RUN apt-get install -y --no-install-recommends lxde
+# additional goodies
+RUN apt-get install -y --no-install-recommends lxlauncher lxtask
 
 # GTK 2 settings for icons and style
 RUN echo '\n\
@@ -55,4 +58,6 @@ lxsession \n\
 RUN chmod +x /usr/local/bin/start 
 
 CMD start
+
+
 
