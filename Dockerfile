@@ -13,12 +13,10 @@ ENV DEBIAN_FRONTEND noninteractive
  
 RUN apt-get update
 RUN apt-get install -y apt-utils
-RUN apt-get install -y dbus-x11 x11-utils x11-xserver-utils procps psmisc
+RUN apt-get install -y dbus-x11 procps psmisc
 
 # OpenGL / MESA
 RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
-#RUN apt-get install -y libxv1 mesa-utils mesa-utils-extra libgl1-mesa-glx libglew2.0 \
-#                       libglu1-mesa libgl1-mesa-dri libdrm2 libgles2-mesa libegl1-mesa
 
 # Language/locale settings
 ENV LANG=en_US.UTF-8
@@ -28,9 +26,11 @@ RUN apt-get install -y locales
 
 # some utils to have proper menus, mime file types etc.
 RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs \
-    menu menu-xdg mime-support desktop-file-utils desktop-base
+    menu menu-xdg mime-support desktop-file-utils
 
 # LXDE
+# (gnome-polkit is an unfortuante and fat replacement for lxpolkit.
+# lxpolkit shows an annoying error message on startup.)
 RUN apt-get install -y --no-install-recommends policykit-1-gnome
 RUN apt-get install -y --no-install-recommends lxde
 # additional goodies
@@ -50,10 +50,19 @@ gtk-theme-name="Raleigh"\n\
 gtk-icon-theme-name="nuoveXT2"\n\
 ' > /etc/skel/.config/gtk-3.0/settings.ini
 
+# wallpaper
+RUN mkdir -p /etc/skel/.config/pcmanfm/LXDE
+RUN echo '\n\
+[*]\n\
+wallpaper_mode=stretch\n\
+wallpaper_common=1\n\
+wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
+' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf
+
 # create startscript 
-RUN echo '#! /bin/bash\n\
+RUN echo '#! /bin/sh\n\
 [ -e "$HOME/.config" ] || cp -R /etc/skel/. $HOME/ \n\
-lxsession \n\
+exec startlxde \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
