@@ -36,6 +36,9 @@ RUN apt-get install -y --no-install-recommends lxde
 # additional goodies
 RUN apt-get install -y --no-install-recommends lxlauncher lxtask
 
+# clean up
+RUN rm -rf /var/lib/apt/lists/*
+
 # GTK 2 settings for icons and style
 RUN echo '\n\
 gtk-theme-name="Raleigh"\n\
