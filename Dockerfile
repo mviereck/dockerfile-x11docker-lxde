@@ -5,14 +5,26 @@
 # Get x11docker from github: 
 #   https://github.com/mviereck/x11docker 
 #
-# Examples: x11docker --desktop x11docker/lxde
-#           x11docker x11docker/lxde pcmanfm
+# Examples: 
+#  - Run desktop:
+#      x11docker --desktop x11docker/lxde
+#  - Run single application:
+#      x11docker x11docker/lxde pcmanfm
+#
+# Options:
+# Persistent home folder stored on host with   --home
+# Shared host folder with                      --sharedir DIR
+# Hardware acceleration with option            --gpu
+# Clipboard sharing with option                --clipboard
+# Sound support with option                    --alsa
+# With pulseaudio in image, sound support with --pulseaudio
+#
+# See x11docker --help for further options.
 
 FROM debian:stretch
 ENV DEBIAN_FRONTEND noninteractive
  
-RUN apt-get update
-RUN apt-get install -y apt-utils
+RUN apt-get  update
 RUN apt-get install -y dbus-x11 procps psmisc
 
 # OpenGL / MESA
@@ -30,14 +42,11 @@ RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs \
 
 # LXDE
 # (gnome-polkit is an unfortuante and fat replacement for lxpolkit.
-# lxpolkit shows an annoying error message on startup.)
+#  lxpolkit shows an annoying error message on startup.)
 RUN apt-get install -y --no-install-recommends policykit-1-gnome
 RUN apt-get install -y --no-install-recommends lxde
 # additional goodies
 RUN apt-get install -y --no-install-recommends lxlauncher lxtask
-
-# clean up
-RUN rm -rf /var/lib/apt/lists/*
 
 # GTK 2 settings for icons and style
 RUN echo '\n\
@@ -62,14 +71,17 @@ wallpaper_common=1\n\
 wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
 ' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf
 
-# create startscript 
+
+# startscript to copy dotfiles from /etc/skel
+# runs either CMD or image command from docker run
 RUN echo '#! /bin/sh\n\
 [ -e "$HOME/.config" ] || cp -R /etc/skel/. $HOME/ \n\
-exec startlxde \n\
+exec $* \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
-CMD start
+ENTRYPOINT start
+CMD startlxde
 
 
-
+ENV DEBIAN_FRONTEND newt
