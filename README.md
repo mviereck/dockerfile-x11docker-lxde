@@ -20,7 +20,7 @@ Dockerfile containing LXDE desktop
 See `x11docker --help` for further options.
 
 # Extend base image
-To add your desired applications, create your own Dockerfile `mydockerfile` with this image as a base. Example:
+To add your desired applications, create your own Dockerfile with this image as a base. Example:
 ```
 FROM x11docker/lxde
 RUN apt-get update
