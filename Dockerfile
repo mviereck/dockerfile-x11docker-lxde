@@ -31,10 +31,11 @@ RUN apt-get install -y dbus-x11 procps psmisc
 RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
 
 # Language/locale settings
-ENV LANG=en_US.UTF-8
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-RUN echo "LANG=en_US.UTF-8" > /etc/default/locale
-RUN apt-get install -y locales
+# replace en_US by your desired locale setting, 
+# for example de_DE for german.
+ENV LANG en_US.UTF-8
+RUN echo $LANG UTF-8 > /etc/locale.gen
+RUN apt-get install -y locales && update-locale --reset LANG=$LANG
 
 # some utils to have proper menus, mime file types etc.
 RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs \
@@ -71,17 +72,15 @@ wallpaper_common=1\n\
 wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
 ' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf
 
-
 # startscript to copy dotfiles from /etc/skel
 # runs either CMD or image command from docker run
 RUN echo '#! /bin/sh\n\
-[ -e "$HOME/.config" ] || cp -R /etc/skel/. $HOME/ \n\
-exec $* \n\
+[ -n "$HOME" ] && [ ! -e "$HOME/.config" ] && cp -R /etc/skel/. $HOME/ \n\
+exec $*\n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
-ENTRYPOINT start
-CMD startlxde
-
+ENTRYPOINT ["/usr/local/bin/start"]
+CMD ["startlxde"]
 
 ENV DEBIAN_FRONTEND newt
