@@ -28,7 +28,7 @@ RUN apt-get  update
 RUN apt-get install -y dbus-x11 procps psmisc
 
 # OpenGL / MESA
-RUN apt-get install -y mesa-utils mesa-utils-extra libxv1 kmod
+RUN apt-get install -y mesa-utils mesa-utils-extra libxv1 kmod xz-utils
 
 # Language/locale settings
 # replace en_US by your desired locale setting, 
