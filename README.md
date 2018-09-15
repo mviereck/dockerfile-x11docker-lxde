@@ -16,6 +16,9 @@ Dockerfile containing LXDE desktop
  - Clipboard sharing with option                `--clipboard`
  - Sound support with option                    `--alsa`
  - With pulseaudio in image, sound support with `--pulseaudio`
+ - Language setting with                        `--lang=$LANG`
+ - Printing over CUPS with                      `--printer`
+ - Webcam support with                          `--webcam`
 
 See `x11docker --help` for further options.
 
