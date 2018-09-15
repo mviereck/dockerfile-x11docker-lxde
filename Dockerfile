@@ -18,35 +18,17 @@
 # Clipboard sharing with option                --clipboard
 # Sound support with option                    --alsa
 # With pulseaudio in image, sound support with --pulseaudio
+# Printer support over CUPS with               --printer
+# Webcam support with                          --webcam
 #
 # See x11docker --help for further options.
 
-FROM debian:stretch
+FROM debian:buster
 ENV DEBIAN_FRONTEND noninteractive 
-RUN apt-get  update
+RUN apt-get update
 
-# Install dummy packages for useless dependencies to shrink down image size
-RUN apt-get install -y --no-install-recommends equivs && \
-echo '#! /bin/bash \n\
-dummydeb() { \n\
-  echo "Section: misc\n\
-Standards-Version: 3.9.2\n\
-Package: $1\n\
-Description: dummy package to avoid installation of $1 \n\
-" >$1 \n\
-  equivs-build $1 \n\
-  apt-get install -y ./$1_1.0_all.deb \n\
-  rm $1 $1_1.0_all.deb \n\
-} \n\
-dummydeb lxpolkit \n\
-dummydeb lightdm \n\
-dummydeb light-locker \n\
-dummydeb policykit-1 \n\
-dummydeb adwaita-icon-theme \n\
-dummydeb gnome-icon-theme \n\
-' > makedummydeb.sh && bash makedummydeb.sh && \
-apt-get purge -y equivs && apt-get -y autoremove
-
+# avoid lxpolkit as it causes annoying error message window
+RUN apt-get install -y --no-install-recommends policykit-1-gnome
 
 # LXDE
 RUN apt-get install -y --no-install-recommends lxde
@@ -71,9 +53,7 @@ RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs \
     menu-xdg mime-support desktop-file-utils
 
 
-# GTK 2 settings for icons and style
-# GTK 3 settings for icons and style
-# wallpaper
+# GTK 2 and 3 settings for icons and style, wallpaper
 RUN echo '\n\
 gtk-theme-name="Raleigh"\n\
 gtk-icon-theme-name="nuoveXT2"\n\
@@ -92,7 +72,8 @@ echo '\n\
 wallpaper_mode=stretch\n\
 wallpaper_common=1\n\
 wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
-' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf
+' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf 
+
 
 # startscript to copy dotfiles from /etc/skel
 # runs either CMD or image command from docker run
