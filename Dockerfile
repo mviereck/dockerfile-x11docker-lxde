@@ -72,7 +72,13 @@ echo '\n\
 wallpaper_mode=stretch\n\
 wallpaper_common=1\n\
 wallpaper=/usr/share/lxde/wallpapers/lxde_blue.jpg\n\
-' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf 
+' > /etc/skel/.config/pcmanfm/LXDE/desktop-items-0.conf && \
+\
+mkdir -p /etc/skel/.config/libfm && \
+echo '\n\
+[config]\n\
+quick_exec=1\n\
+' > /etc/skel/.config/libfm/libfm.conf
 
 
 # startscript to copy dotfiles from /etc/skel
