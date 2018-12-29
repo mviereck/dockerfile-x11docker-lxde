@@ -78,8 +78,14 @@ mkdir -p /etc/skel/.config/libfm && \
 echo '\n\
 [config]\n\
 quick_exec=1\n\
-' > /etc/skel/.config/libfm/libfm.conf
-
+' > /etc/skel/.config/libfm/libfm.conf && \
+\
+mkdir -p /etc/skel/.config/openbox/ && \
+echo '<?xml version="1.0" encoding="UTF-8"?>\n\
+<theme>\n\
+  <name>Clearlooks</name>\n\
+</theme>\n\
+' > /etc/skel/.config/openbox/lxde-rc.xml
 
 # startscript to copy dotfiles from /etc/skel
 # runs either CMD or image command from docker run
