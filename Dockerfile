@@ -92,7 +92,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>\n\
 RUN echo '#! /bin/sh\n\
 [ -n "$HOME" ] && [ ! -e "$HOME/.config" ] && cp -R /etc/skel/. $HOME/ \n\
 unset DEBIAN_FRONTEND \n\
-exec $*\n\
+exec "$@"\n\
 ' > /usr/local/bin/start && chmod +x /usr/local/bin/start 
 
 ENTRYPOINT ["/usr/local/bin/start"]
