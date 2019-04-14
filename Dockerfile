@@ -24,33 +24,20 @@
 # See x11docker --help for further options.
 
 FROM debian:buster
-ENV DEBIAN_FRONTEND noninteractive 
-RUN apt-get update
-
-# avoid lxpolkit as it causes annoying error message window
-RUN apt-get install -y --no-install-recommends policykit-1-gnome
-
-# LXDE
-RUN apt-get install -y --no-install-recommends lxde
-
-# Additional tools. kmod and xz-utils for nvidia driver install support.
-RUN apt-get install -y --no-install-recommends dbus-x11 procps psmisc lxlauncher lxtask kmod xz-utils
+RUN apt-get update && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      policykit-1-gnome && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      dbus-x11 \
+      lxde \
+      lxlauncher \
+      lxmenu-data \
+      lxtask \
+      psmisc
 
 # OpenGL / MESA
 # adds 68 MB to image, disabled
-#RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
-
-# Language/locale settings
-# replace en_US by your desired locale setting, 
-# for example de_DE for german.
-ENV LANG en_US.UTF-8
-RUN echo $LANG UTF-8 > /etc/locale.gen && \
-    apt-get install -y locales && \
-    update-locale --reset LANG=$LANG
-
-# some utils to have proper menus, mime file types etc.
-RUN apt-get install -y --no-install-recommends xdg-utils xdg-user-dirs \
-    menu-xdg mime-support desktop-file-utils
+#RUN apt-get install -y mesa-utils mesa-utils-extra libxv1 
 
 
 # GTK 2 and 3 settings for icons and style, wallpaper
@@ -87,15 +74,4 @@ echo '<?xml version="1.0" encoding="UTF-8"?>\n\
 </theme>\n\
 ' > /etc/skel/.config/openbox/lxde-rc.xml
 
-# startscript to copy dotfiles from /etc/skel
-# runs either CMD or image command from docker run
-RUN echo '#! /bin/sh\n\
-[ -n "$HOME" ] && [ ! -e "$HOME/.config" ] && cp -R /etc/skel/. $HOME/ \n\
-unset DEBIAN_FRONTEND \n\
-exec "$@"\n\
-' > /usr/local/bin/start && chmod +x /usr/local/bin/start 
-
-ENTRYPOINT ["/usr/local/bin/start"]
 CMD ["startlxde"]
-
-ENV DEBIAN_FRONTEND newt
