@@ -33,6 +33,7 @@ RUN apt-get update && \
       lxlauncher \
       lxmenu-data \
       lxtask \
+      procps \
       psmisc
 
 # OpenGL / MESA
@@ -65,6 +66,7 @@ mkdir -p /etc/skel/.config/libfm && \
 echo '\n\
 [config]\n\
 quick_exec=1\n\
+terminal=lxterminal\n\
 ' > /etc/skel/.config/libfm/libfm.conf && \
 \
 mkdir -p /etc/skel/.config/openbox/ && \
@@ -72,6 +74,18 @@ echo '<?xml version="1.0" encoding="UTF-8"?>\n\
 <theme>\n\
   <name>Clearlooks</name>\n\
 </theme>\n\
-' > /etc/skel/.config/openbox/lxde-rc.xml
+' > /etc/skel/.config/openbox/lxde-rc.xml && \
+\
+mkdir -p /etc/skel/.config/ && \
+echo '[Added Associations]\n\
+text/plain=mousepad.desktop;\n\
+' > /etc/skel/.config/mimeapps.list
 
-CMD ["startlxde"]
+RUN echo "#! /bin/bash\n\
+echo 'x11docker/lxde: If the panel does not show an appropriate menu\n\
+  and you encounter high CPU usage (seen with kata-runtime),\n\
+  please run with option --init=systemd.\n\
+'\n\
+startlxde\n\
+" >/usr/local/bin/start && chmod +x /usr/local/bin/start
+CMD ["/usr/local/bin/start"]
