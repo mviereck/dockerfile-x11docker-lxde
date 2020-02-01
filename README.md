@@ -1,9 +1,8 @@
 # x11docker/lxde
 
 Dockerfile containing LXDE desktop
- - Run LXDE desktop in docker. 
- - Use x11docker to run GUI applications and desktop environments in docker images. 
- - Get [x11docker from github](https://github.com/mviereck/x11docker)
+ - Run LXDE desktop in docker.
+  - Use [x11docker](https://github.com/mviereck/x11docker) to run GUI applications and desktop environments in docker images. 
 
 # Command examples: 
  - Single application: `x11docker x11docker/lxde pcmanfm`
@@ -11,12 +10,12 @@ Dockerfile containing LXDE desktop
 
 # Options:
  - Persistent home folder stored on host with   `--home`
- - Shared host folder with                      `--sharedir DIR`
+ - Shared host file or folder with              `--share PATH`
  - Hardware acceleration with option            `--gpu`
  - Clipboard sharing with option                `--clipboard`
- - Sound support with option                    `--alsa`
- - With pulseaudio in image, sound support with `--pulseaudio`
- - Language setting with                        `--lang=$LANG`
+ - ALSA sound support with option               `--alsa`
+ - Pulseaudio sound support with option         `--pulseaudio`
+ - Language locale settings with                `--lang [=$LANG]`
  - Printing over CUPS with                      `--printer`
  - Webcam support with                          `--webcam`
 
@@ -30,7 +29,7 @@ RUN apt-get update
 RUN apt-get install -y midori
 ```
 
- # Screenshot
+# Screenshot
 ![screenshot](https://raw.githubusercontent.com/mviereck/x11docker/screenshots/screenshot-lxde.png "lxde desktop running in Xephyr window using x11docker")
  
 

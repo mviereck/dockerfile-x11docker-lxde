@@ -85,7 +85,8 @@ RUN echo "#! /bin/bash\n\
 echo 'x11docker/lxde: If the panel does not show an appropriate menu\n\
   and you encounter high CPU usage (seen with kata-runtime),\n\
   please run with option --init=systemd.\n\
-'\n\
+' >&2 \n\
 startlxde\n\
 " >/usr/local/bin/start && chmod +x /usr/local/bin/start
+
 CMD ["/usr/local/bin/start"]
