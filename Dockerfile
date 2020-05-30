@@ -82,7 +82,7 @@ text/plain=mousepad.desktop;\n\
 ' > /etc/skel/.config/mimeapps.list
 
 RUN echo "#! /bin/bash\n\
-echo 'x11docker/lxde: If the panel does not show an appropriate menu\n\
+echo 'x11docker/lxde: If the panel does not show an approbate menu\n\
   and you encounter high CPU usage (seen with kata-runtime),\n\
   please run with option --init=systemd.\n\
 ' >&2 \n\
